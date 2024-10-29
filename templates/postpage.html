@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}Rich Text Editor{% endblock %}
+
+{% block content %}
+<form action="/submit/" method="POST">
+    <h3>Text</h3>
+    <div id="summernote" style="height: 200px;"></div> <!-- Summernote editor container -->
+    <input type="hidden" name="blkdata" id="hidden-blkdata"> <!-- Hidden input for Summernote content -->
+    <div id="notification">Content Limit: 32500 bytes</div> <!-- Notification message -->
+    <h3>Tag</h3>
+    <input type='text' name='blktag' required/> <!-- Tag input -->
+    <p><input type='submit' value='Post' class="btn btn-primary mt-3"/></p>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize Summernote editor
+    $(document).ready(function() {
+        var LIMIT = 32500; // Set character limit
+        var notification = $("#notification");
+
+        $('#summernote').summernote({
+            placeholder: 'Write your content here...',
+            tabsize: 2,
+            height: 200, // Adjust height as needed
+            callbacks: {
+                onChange: function(contents, $editable) {
+                    var html = contents; // Get HTML content
+                    var byteCount = new TextEncoder().encode(html).length; // Calculate byte size
+                    var bytesLeft = LIMIT - byteCount;
+
+                    // Update the notification message
+                    notification.text(`Content Limit: 32500 bytes | Remaining: ${bytesLeft}`);
+
+                    // Optional: Notify if the limit is exceeded
+                    if (byteCount > LIMIT) {
+                        notification.css('color', 'red');
+                    } else {
+                        notification.css('color', '');
+                    }
+                }
+            }
+        });
+
+        // Handle form submission
+        $('form').on('submit', function() {
+            var nmContent = $('#hidden-blkdata'); // Ensure the name matches
+            nmContent.val($('#summernote').summernote('code')); // Capture Summernote content
+        });
+    });
+</script>
+{% endblock %}

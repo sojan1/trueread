@@ -1,0 +1,96 @@
+        .notification {
+            color: red;
+        }
+        /* Static Header Styles */
+        .static-header {
+            margin-bottom: 20px; /* Space below the header */
+        }
+
+        /* Block ID and Tag Styles */
+        .block-id,
+        .tag {
+            font-size: 14px; /* Smaller font size */
+            color: #666; /* Optional: Change the color to a lighter gray for less emphasis */
+        }
+
+        /* Separator Styles */
+        .separator {
+            height: 2px; /* Thickness of the line */
+            background-color: #800080; /* Purple color */
+            margin: 10px 0; /* Space above and below the line */
+        }
+
+        /* Separator Styles */
+        .separator {
+            height: 2px; /* Thickness of the line */
+            background-color: #800080; /* Purple color */
+            margin: 10px 0; /* Space above and below the line */
+        }
+        
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F7F7F7; /* Soft Gray Background */
+            color: #333; /* Dark Gray Text */
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #800080; /* Purple Color */
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: white; /* White Links */
+            text-decoration: none;
+            padding: 10px 15px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Light Hover Effect */
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 1200px; /* Maximum Width */
+            margin: 20px auto; /* Center Container */
+            padding: 20px;
+            background: #ffffff; /* White Background */
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #800080; /* Purple Background */
+            color: white; /* White Text */
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column; /* Stack items on smaller screens */
+                align-items: flex-start;
+            }
+            .navbar a {
+                padding: 8px;
+                width: 100%; /* Full Width Links */
+            }
+        }

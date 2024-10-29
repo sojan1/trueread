@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Text Editor</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+    <h2>Rich Text Box with FastAPI</h2>
+
+    <form action="/submit" method="POST">
+        <h3>Text</h3>
+        <div id="nm" style="height: 200px;"></div> <!-- Quill editor container -->
+        <input type="hidden" name="nm" id="hidden-nm"> <!-- Hidden input for Quill content -->
+        <div id="notification" style="color: red;">Content Limit: 32500 bytes</div> <!-- Notification message -->
+        <h3>Tag</h3>
+        <p><input type='text' name='pwd'/></p>
+        <p><input type='submit' value='Post'/></p>
+        
+       
+    </form>
+
+    <!-- Quill.js library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // Initialize Quill editor
+        var quill = new Quill('#nm', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }], // Header options
+                    ['bold', 'italic', 'underline', 'strike'], // Text formatting options
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }], // List options
+                    [{ 'align': [] }], // Alignment options
+                    ['blockquote', 'code-block'], // Blockquote and Code Block
+                    ['link', 'image', 'video'], // Link, Image, Video
+                    ['clean'] // Clean formatting button
+                ]
+            }
+        });
+        
+ 
+  
+
+
+
+        const LIMIT = 32500; // Example byte size limit
+        var notification = document.getElementById("notification");
+
+        // Monitor changes in the Quill editor
+        quill.on('text-change', function() {
+
+
+         var text = quill.getText(); // Get plain text
+ var html = quill.root.innerHTML; // Get HTML content
+    var textSize = text.length; // Character count
+   var htmlSize = new Blob([html]).size; // Size in bytes
+   // console.log(`Text size in characters: ${textSize}`);
+  console.log(`HTML size in bytes: ${htmlSize}`);
+ 
+
+
+            var content = quill.root.innerHTML;  // Capture Quill content
+            
+            // Measure size in bytes
+            var byteCount = new TextEncoder().encode(content).length;
+
+            var bytesLeft = LIMIT - byteCount;
+
+            // Update the remaining bytes display
+            notification.innerText = 'Content Limit: 32500 bytes | Remaining: ' + bytesLeft;
+ 
+            // Show notification if limit exceeded
+            // if (byteCount > LIMIT) {
+            //     notification.style.display = 'block';
+            // } else {
+            //     notification.style.display = 'none';
+            // }
+        });
+
+        // Handle form submission
+        var form = document.querySelector('form');
+        form.onsubmit = function() {
+            var nmContent = document.querySelector('input[name=nm]');
+            nmContent.value = quill.root.innerHTML;  // Capture Quill content
+            
+            // Log the content in the console to verify it's being captured correctly
+            console.log("Quill content: ", nmContent.value);
+        };
+    </script>
+</body>
+</html>

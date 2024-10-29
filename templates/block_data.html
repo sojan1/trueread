@@ -1,0 +1,22 @@
+<!-- templates/profile.html -->
+{% extends "layout.html" %}
+
+{% block title %}Block Content{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="static-header">
+        <div class="block-id">Block ID: <span>{{ block_id }}</span></div> <!-- Block ID Section -->
+        <div class="tag">
+            <strong>Tag:</strong> <span>{{ tag }}</span>
+        </div> <!-- Tag Section -->
+        
+        <!-- Add a line to separate after the tag -->
+        <div class="separator"></div>
+    </div>
+    
+    <div class="data-container"> <!-- Data Section -->
+        <div class="data-content">{{ data | safe }}</div> <!-- Displaying the actual data as HTML -->
+    </div>
+</div>
+{% endblock %}
