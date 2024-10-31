@@ -1,96 +1,119 @@
-        .notification {
-            color: red;
-        }
-        /* Static Header Styles */
-        .static-header {
-            margin-bottom: 20px; /* Space below the header */
-        }
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* Block ID and Tag Styles */
-        .block-id,
-        .tag {
-            font-size: 14px; /* Smaller font size */
-            color: #666; /* Optional: Change the color to a lighter gray for less emphasis */
-        }
+/* Body Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fafafa; /* Soft Gray Background */
+    color: #4d1a2e; /* Dark Gray Text */
+}
 
-        /* Separator Styles */
-        .separator {
-            height: 2px; /* Thickness of the line */
-            background-color: #800080; /* Purple color */
-            margin: 10px 0; /* Space above and below the line */
-        }
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d52057; /* Updated to the new color */
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fix the navbar to the top */
+    top: 0;
+    left: 0;
+    right: 0; /* Make it stretch across the entire width */
+    z-index: 1000; /* Ensure the navbar is above other elements */
+}
 
-        /* Separator Styles */
-        .separator {
-            height: 2px; /* Thickness of the line */
-            background-color: #800080; /* Purple color */
-            margin: 10px 0; /* Space above and below the line */
-        }
-        
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+.navbar a {
+    color: white; /* White Links */
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
 
-        /* Body Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #F7F7F7; /* Soft Gray Background */
-            color: #333; /* Dark Gray Text */
-        }
+.navbar a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Light Hover Effect */
+}
 
-        /* Navbar Styles */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #800080; /* Purple Color */
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+/* Sidebar Styling */
+.sidebar {
+    position: fixed; /* Keep the sidebar fixed */
+    top: 0;
+    left: 0;
+    width: 250px; /* Sidebar width */
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(135deg, #f0f0f0, #fff); /* Light silver gradient effect */
+    padding-top: 60px; /* Space for the top navbar */
+    z-index: 900; /* Ensure the sidebar is below the navbar */
+}
 
-        .navbar a {
-            color: white; /* White Links */
-            text-decoration: none;
-            padding: 10px 15px;
-            transition: background-color 0.3s;
-        }
+.sidebar .menu {
+    display: flex;
+    flex-direction: column;
+}
 
-        .navbar a:hover {
-            background-color: rgba(255, 255, 255, 0.2); /* Light Hover Effect */
-        }
+.sidebar .menu a {
+    color: #4d1a2e; /* Dark text for contrast */
+    padding: 15px 20px; /* More padding for touch targets */
+    text-align: left; /* Left align for readability */
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px; /* Rounded corners for a modern look */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover */
+}
 
-        /* Container Styles */
-        .container {
-            max-width: 1200px; /* Maximum Width */
-            margin: 20px auto; /* Center Container */
-            padding: 20px;
-            background: #ffffff; /* White Background */
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+.sidebar .menu a:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Light black background on hover for contrast */
+    color: #d52057; /* Keep text dark on hover */
+}
 
-        /* Footer Styles */
-        .footer {
-            text-align: center;
-            padding: 15px 0;
-            background-color: #800080; /* Purple Background */
-            color: white; /* White Text */
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
+/* Main Content Area */
+.content {
+    margin-left: 250px; /* Offset content by sidebar width */
+    padding: 20px;
+    padding-top: 70px; /* Ensure content starts below the fixed navbar */
+}
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column; /* Stack items on smaller screens */
-                align-items: flex-start;
-            }
-            .navbar a {
-                padding: 8px;
-                width: 100%; /* Full Width Links */
-            }
-        }
+/* Footer Styles */
+.footer {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #d52057; /* Updated to the new color */
+    color: white; /* White Text */
+    position: relative;
+    bottom: 0;
+    width: calc(100% - 250px); /* Adjust footer width to account for sidebar */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column; /* Stack items on smaller screens */
+        align-items: flex-start;
+    }
+    .navbar a {
+        padding: 8px;
+        width: 100%; /* Full Width Links */
+    }
+
+    /* Adjust Sidebar for Small Screens */
+    .sidebar {
+        position: relative; /* Change from fixed to relative */
+        width: 100%; /* Full width on small screens */
+        height: auto; /* Height auto to contain content */
+    }
+
+    .content {
+        margin-left: 0; /* Reset margin on smaller screens */
+        padding: 20px;
+        padding-top: 70px; /* Ensure content starts below the fixed navbar */
+    }
+
+    .footer {
+        width: 100%; /* Full width footer */
+        margin-left: 0; /* Reset margin on smaller screens */
+    }
+}

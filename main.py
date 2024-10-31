@@ -38,6 +38,18 @@ async def read_root(request: Request):
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
+@app.get("/layouttest", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("layouttest.html", {"request": request})
+
+
+
+
+
+
+
+
+
 @app.get("/register", response_class=HTMLResponse)
 async def login(request: Request):
     return render_template("register.html", request)
