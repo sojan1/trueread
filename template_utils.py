@@ -8,13 +8,16 @@ def render_template(
     template_name: str,
     request: Request,
     context: dict = {},
-    error: str = None
+    error: str = None,
+    active_page: str = None  # New parameter for the active sidebar link
 ):
     """
     Renders a template with optional error handling and data preservation.
     """
-    # Add request and error to context for use in the template
+    # Add request, error, and active_page to context for use in the template
     context.update({"request": request})
     if error:
         context.update({"error": error})
+    if active_page:
+        context.update({"active_page": active_page})  # Add active_page to context
     return templates.TemplateResponse(template_name, context)

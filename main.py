@@ -36,11 +36,11 @@ async def read_root(request: Request):
 
 @app.get("/login/", response_class=HTMLResponse)
 async def login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request, "active_page": "login"})
 
-@app.get("/layouttest", response_class=HTMLResponse)
+@app.get("/help", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("layouttest.html", {"request": request})
+    return templates.TemplateResponse("help.html", {"request": request, "active_page": "help"})
 
 
 
@@ -52,7 +52,7 @@ async def read_root(request: Request):
 
 @app.get("/register", response_class=HTMLResponse)
 async def login(request: Request):
-    return render_template("register.html", request)
+    return render_template("register.html", request, active_page="register")  # Set active_page for the register page
     #return templates.TemplateResponse("register.html", {"request": request})
 
 @app.post("/register")

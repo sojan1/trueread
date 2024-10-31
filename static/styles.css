@@ -61,7 +61,6 @@ body {
     text-align: left; /* Left align for readability */
     text-decoration: none;
     font-weight: bold;
-    border-radius: 5px; /* Rounded corners for a modern look */
     transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover */
 }
 
@@ -69,6 +68,14 @@ body {
     background-color: rgba(0, 0, 0, 0.1); /* Light black background on hover for contrast */
     color: #d52057; /* Keep text dark on hover */
 }
+
+/* sidebar when selected */
+.sidebar .menu a.active {
+    background-color: rgba(0, 0, 0, 0.1); /* Light black background on hover for contrast */
+    color: #d52057; /* Adjust text color for visibility */
+}
+
+
 
 /* Main Content Area */
 .content {
@@ -115,5 +122,36 @@ body {
     .footer {
         width: 100%; /* Full width footer */
         margin-left: 0; /* Reset margin on smaller screens */
+    }
+}
+
+
+
+/*common page starts*/
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    height: 100%;
+}
+
+.container {
+    padding: 0; /* Ensure no extra padding around the container */
+}
+
+.login-container {
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: -20px; /* Negative margin to pull it closer to the navbar */
+}
+
+/* Adjust padding for larger screens */
+@media (min-width: 768px) {
+    .container {
+        padding-top: 5rem; /* Adds space below navbar on larger screens */
     }
 }
