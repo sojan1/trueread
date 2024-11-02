@@ -11,8 +11,7 @@ from fastapi_login import LoginManager
 import bcrypt
 
 
-#sample - can be removed
-#from database import SessionLocal, User  # Import from database.py
+
 
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from database import DATABASE_URL, User, Base
@@ -23,6 +22,7 @@ from utils import add_to_database
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+templates.env.cache = {}  # Disable caching
 
 #secretkey to generate token
 SECRET_KEY = "your_secret_key"
@@ -59,18 +59,6 @@ def login(email: str = Form(...), password: str = Form(...)):
 def get_user(email: str):
     return load_user(email)
 
-@app.get("/signin", response_class=HTMLResponse)
-async def sign_in_page(request: Request):
-    return templates.TemplateResponse("signin.html", {"request": request})
-
-
-@app.get("/success", response_class=HTMLResponse)
-async def success_page(request: Request, token: str = None):
-    return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
-
-
-
-
 
 
 # Serve static files from the 'static' directory , without this CSS will not work, and it will display error as 'Internal Server Error'
@@ -79,17 +67,24 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # fastapiSqlalchemy
 app.add_middleware(DBSessionMiddleware, db_url=DATABASE_URL)
 
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("signin.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/login/", response_class=HTMLResponse)
+@app.get("/signin", response_class=HTMLResponse)
 async def login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request, "active_page": "login"})
+    return templates.TemplateResponse("signin.html", {"request": request, "active_page": "signin"})
 
 @app.get("/home", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
+
+
+@app.get("/success", response_class=HTMLResponse)
+async def success_page(request: Request, token: str = None):
+    return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
+
 
 @app.get("/help", response_class=HTMLResponse)
 async def read_root(request: Request):
