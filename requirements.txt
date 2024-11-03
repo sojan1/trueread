@@ -10,3 +10,5 @@ jinja2==3.1.2             # Templating engine for rendering HTML
 pydantic==1.10.9          # Data validation and settings management
 alembic==1.10.1           # Database migrations for SQLAlchemy
 python-multipart>=0.0.16   # Required for handling form data in FastAPI
+fastapi-login>=1.10.2      # Required for handling FastAPI Login
+bcrypt>=4.2.0               # Required for handling encrypt decrypt
