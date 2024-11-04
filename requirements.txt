@@ -12,3 +12,4 @@ alembic==1.10.1           # Database migrations for SQLAlchemy
 python-multipart>=0.0.16   # Required for handling form data in FastAPI
 fastapi-login>=1.10.2      # Required for handling FastAPI Login
 bcrypt>=4.2.0               # Required for handling encrypt decrypt
+colorama>=0.4.6             # Required for printing to debug
