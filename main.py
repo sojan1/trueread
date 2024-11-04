@@ -9,7 +9,8 @@ from jwt.exceptions import InvalidTokenError
 
 
 from routes import help  # Import the help module
-
+from routes import signin # Import the signin module
+from routes import register # Import the signin module
 
 #to use shared headers, 
 # purpose is to use route, route allows to use prefix in subfolders
@@ -40,7 +41,8 @@ templates = Jinja2Templates(directory="templates")
 templates.env.cache = {}  # Disable caching
 
 app.include_router(help.router)
-
+app.include_router(signin.router)
+app.include_router(register.router)
 
 #secretkey to generate token
 SECRET_KEY = "your_secret_key"
@@ -117,13 +119,13 @@ def protected_home(request: Request, access_token: str = Cookie(None)):
 
 
 
-@app.get("/signin", response_class=HTMLResponse)
-async def login(request: Request):
-    return templates.TemplateResponse("signin.html", {"request": request, "active_page": "signin"})
+# @app.get("/signin", response_class=HTMLResponse)
+# async def login(request: Request):
+#     return templates.TemplateResponse("signin.html", {"request": request, "active_page": "signin"})
 
-@app.get("/signupsuccess", response_class=HTMLResponse)
-async def success_page(request: Request, token: str = None):
-    return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
+# @app.get("/signupsuccess", response_class=HTMLResponse)
+# async def success_page(request: Request, token: str = None):
+#     return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
 
 # #to use shared
 # #app.include_router(help.router) 
@@ -131,43 +133,43 @@ async def success_page(request: Request, token: str = None):
 # async def read_root(request: Request):
 #     return templates.TemplateResponse("help.html", {"request": request, "active_page": "help"})
 
-@app.get("/register", response_class=HTMLResponse)
-async def login(request: Request):
-    return render_template("register.html", request, active_page="register")  # Set active_page for the register page
-    #return templates.TemplateResponse("register.html", {"request": request})
+# @app.get("/register", response_class=HTMLResponse)
+# async def login(request: Request):
+#     return render_template("register.html", request, active_page="register")  # Set active_page for the register page
+#     #return templates.TemplateResponse("register.html", {"request": request})
 
-@app.post("/register")
-async def register_user(
-    request: Request,
-    username: str = Form(...),
-    password: str = Form(...),
-    confirm_password: str = Form(...),
-    name: str = Form(...),
-    email: str = Form(...),
-    phone: str = Form(...)
-):
-    if password != confirm_password:
-        return render_template(
-            "register.html",
-            request,
-            context={"username": username, "name": name, "email": email, "phone": phone},
-            error="Passwords do not match"
-        )
-        #raise HTTPException(status_code=400, detail="Passwords do not match")
+# @app.post("/register")
+# async def register_user(
+#     request: Request,
+#     username: str = Form(...),
+#     password: str = Form(...),
+#     confirm_password: str = Form(...),
+#     name: str = Form(...),
+#     email: str = Form(...),
+#     phone: str = Form(...)
+# ):
+#     if password != confirm_password:
+#         return render_template(
+#             "register.html",
+#             request,
+#             context={"username": username, "name": name, "email": email, "phone": phone},
+#             error="Passwords do not match"
+#         )
+#         #raise HTTPException(status_code=400, detail="Passwords do not match")
     
-    new_user = User(username=username, password=password, name=name, email=email, phone=phone)
-    try:
-        add_to_database(new_user)
-        # Redirect to success page if successful
-        return render_template("signupsuccess.html", request, context={"user": new_user})
-    except HTTPException as e:
-        # Redirect back with error message and pre-filled data in case of exception
-        return render_template(
-            "register.html",
-            request,
-            context={"username": username, "name": name, "email": email, "phone": phone},
-            error=e.detail
-        )
+#     new_user = User(username=username, password=password, name=name, email=email, phone=phone)
+#     try:
+#         add_to_database(new_user)
+#         # Redirect to success page if successful
+#         return render_template("signupsuccess.html", request, context={"user": new_user})
+#     except HTTPException as e:
+#         # Redirect back with error message and pre-filled data in case of exception
+#         return render_template(
+#             "register.html",
+#             request,
+#             context={"username": username, "name": name, "email": email, "phone": phone},
+#             error=e.detail
+#         )
 
 
 
