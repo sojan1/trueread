@@ -57,25 +57,32 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # Token verification dependency
  
-
-
 def verify_token(request: Request):
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized access")
 
+
     try:
-        # payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        # email = payload.get("sub")  # Assuming 'sub' contains the user email
         user = manager.get_current_user(token)
-
-
-
     except InvalidCredentialsException:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     return user
 
+
+@app.get("/home", response_class=HTMLResponse)
+async def read_home(request: Request, user: str = Depends(verify_token)):
+    # Pass the user and request to the template
+    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": user})
+
+# @app.get("/home", response_class=HTMLResponse)
+# def read_home(user=Depends(verify_token)):
+#     return HTMLResponse("<h1>Welcome to the protected home page!</h1>")
+
+# @app.get("/home", response_class=HTMLResponse)
+# async def read_home(request: Request, token: str = Depends(verify_token)):
+#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
 
 
 @app.post("/user/signin")
@@ -94,28 +101,15 @@ def login(email: str = Form(...), password: str = Form(...), response: Response 
 
 
 
-# @app.post("/user/signin")
-# def login(data: OAuth2PasswordRequestForm = Depends()):
-#     email = data.username
-#     password = data.password
-
-#     user = load_user(email)  # we are using the same function to retrieve the user
-#     if not user:
-#         raise InvalidCredentialsException  # you can also use your own HTTPException
-#     elif password != user.password:
-#         raise InvalidCredentialsException
-
-#     access_token = manager.create_access_token(
-#         data=dict(sub=email)
-#     )
-#     return {"access_token": access_token}
-#     #return {'access_token': access_token, 'token_type': 'bearer'}
 
 
 @manager.user_loader
 def get_user(email: str):
     return load_user(email)
 
+# @app.get("/home", response_class=HTMLResponse)
+# async def read_home(request: Request, token: str = Depends(verify_token)):
+#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
 
 
 # Serve static files from the 'static' directory , without this CSS will not work, and it will display error as 'Internal Server Error'
