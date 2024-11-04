@@ -51,54 +51,16 @@ fake_users_db = {
     }
 }
 
+@manager.user_loader
+def get_user(email: str):
+    return load_user(email)
+
 #functions
 def load_user(email: str):
     return fake_users_db.get(email)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
-
-# Token verification dependency
- 
-# def verify_token(request: Request):
-#     token = request.cookies.get("access_token")
-#     if not token:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized access")
-
-
-#     try:
-#         user = manager.get_current_user(token)
-#     except InvalidCredentialsException:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-#     return user
-
-@app.get("/home")
-def protected_home(request: Request, access_token: str = Cookie(None)):
-    if access_token is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-
-    payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-    username: str = payload.get("sub")
-    print(Style.BRIGHT + Fore.RED + f"This is a bold error message: {username}")
-    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
-    # Optionally, you can return something as well
-    #return {"access_token": f"{username} - {access_token}"}
-
-
-
-# @app.get("/home", response_class=HTMLResponse)
-# async def read_home(request: Request, user: str = Depends(verify_token)):
-#     # Pass the user and request to the template
-#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": user})
-
-# @app.get("/home", response_class=HTMLResponse)
-# def read_home(user=Depends(verify_token)):
-#     return HTMLResponse("<h1>Welcome to the protected home page!</h1>")
-
-# @app.get("/home", response_class=HTMLResponse)
-# async def read_home(request: Request, token: str = Depends(verify_token)):
-#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
 
 
 @app.post("/user/signin")
@@ -117,17 +79,6 @@ def login(email: str = Form(...), password: str = Form(...), response: Response 
 
 
 
-
-
-@manager.user_loader
-def get_user(email: str):
-    return load_user(email)
-
-# @app.get("/home", response_class=HTMLResponse)
-# async def read_home(request: Request, token: str = Depends(verify_token)):
-#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
-
-
 # Serve static files from the 'static' directory , without this CSS will not work, and it will display error as 'Internal Server Error'
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -138,31 +89,33 @@ app.add_middleware(DBSessionMiddleware, db_url=DATABASE_URL)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/home")
+def protected_home(request: Request, access_token: str = Cookie(None)):
+    if access_token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
+    payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+    username: str = payload.get("sub")
+    print(Style.BRIGHT + Fore.RED + f"This is a bold error message: {username}")
+    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
+    # Optionally, you can return something as well
+    #return {"access_token": f"{username} - {access_token}"}
+
+
+
 @app.get("/signin", response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request, "active_page": "signin"})
 
-# @app.get("/home", response_class=HTMLResponse)
-# async def read_root(request: Request):
-#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
-
-# @app.get("/home", response_class=HTMLResponse)
-# async def read_home(request: Request, token: str = Depends(verify_token)):
-#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
-
 @app.get("/success", response_class=HTMLResponse)
 async def success_page(request: Request, token: str = None):
     return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
-
-
 
 #to use shared
 #app.include_router(help.router) 
 @app.get("/help", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("help.html", {"request": request, "active_page": "help"})
-
-
 
 @app.get("/register", response_class=HTMLResponse)
 async def login(request: Request):
@@ -202,4 +155,10 @@ async def register_user(
             error=e.detail
         )
 
-    
+# @app.get("/home", response_class=HTMLResponse)
+# def read_home(user=Depends(verify_token)):
+#     return HTMLResponse("<h1>Welcome to the protected home page!</h1>")
+
+# @app.get("/home", response_class=HTMLResponse)
+# async def read_home(request: Request, token: str = Depends(verify_token)):
+#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home"})
