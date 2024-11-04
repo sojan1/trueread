@@ -32,6 +32,11 @@ import bcrypt
 from fastapi_sqlalchemy import DBSessionMiddleware
 from database import DATABASE_URL
 
+from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
+from fastapi_async_sqlalchemy import db  # provide access to a database session
+from sqlalchemy import column
+from sqlalchemy import table
+
 # from sqlalchemy.exc import IntegrityError
 # from database import DATABASE_URL, User, Base
 # from utils import add_to_database
@@ -46,7 +51,18 @@ templates.env.cache = {}  # Disable caching
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # fastapiSqlalchemy -  not used
-app.add_middleware(DBSessionMiddleware, db_url=DATABASE_URL)
+#app.add_middleware(DBSessionMiddleware, db_url=DATABASE_URL)
+
+app.add_middleware(
+    SQLAlchemyMiddleware,
+    db_url=DATABASE_URL,  # Use the async connection string here
+    engine_args={
+        "echo": True,
+        "pool_pre_ping": True,
+        "pool_size": 5,
+        "max_overflow": 10,
+    },
+)
 
 app.include_router(help.router)
 app.include_router(signin.router)

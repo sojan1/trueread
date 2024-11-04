@@ -2,6 +2,9 @@
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from common.shared import templates
+import bcrypt
+from fastapi_async_sqlalchemy import db
+from database import User
 
 # from fastapi_sqlalchemy import DBSessionMiddleware, db
 # from database import DATABASE_URL, User, Base
@@ -36,6 +39,7 @@ async def register_user(
     email: str = Form(...),
     phone: str = Form(...)
 ):
+    
     if password != confirm_password:
         return render_template(
             "register.html",
@@ -43,21 +47,49 @@ async def register_user(
             context={"username": username, "name": name, "email": email, "phone": phone},
             error="Passwords do not match"
         )
+        
         #raise HTTPException(status_code=400, detail="Passwords do not match")
+
+        
     
     new_user = User(username=username, password=password, name=name, email=email, phone=phone)
+    new_user.password=bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     try:
-        add_to_database(new_user)
+        # Use the session from SQLAlchemyMiddleware
+        async with db():
+            db.session.add(new_user)  # Add the new user to the session
+            await db.session.commit()  # Commit the session to save the new user
+        
         # Redirect to success page if successful
         return render_template("signupsuccess.html", request, context={"user": new_user})
     except HTTPException as e:
-        # Redirect back with error message and pre-filled data in case of exception
+        # Handle specific HTTP exceptions if they occur
         return render_template(
             "register.html",
             request,
             context={"username": username, "name": name, "email": email, "phone": phone},
             error=e.detail
         )
+    except Exception as e:
+        # Handle other exceptions (e.g., database errors)
+        return render_template(
+            "register.html",
+            request,
+            context={"username": username, "name": name, "email": email, "phone": phone},
+            error=str(e)  # Show the error message
+        )
+    # try:
+    #     add_to_database(new_user)
+    #     # Redirect to success page if successful
+    #     return render_template("signupsuccess.html", request, context={"user": new_user})
+    # except HTTPException as e:
+    #     # Redirect back with error message and pre-filled data in case of exception
+    #     return render_template(
+    #         "register.html",
+    #         request,
+    #         context={"username": username, "name": name, "email": email, "phone": phone},
+    #         error=e.detail
+    #     )
 
 
 def render_template(
