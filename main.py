@@ -1,10 +1,11 @@
 #-main.py
-from fastapi import FastAPI,Form, HTTPException, Request, Depends, status, Response
+from fastapi import FastAPI,Form, HTTPException, Request, Depends, status, Response, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from colorama import Fore, Style, init
 import jwt
+
 
 #to use shared headers, 
 # purpose is to use route, route allows to use prefix in subfolders
@@ -38,13 +39,15 @@ templates.env.cache = {}  # Disable caching
 
 #secretkey to generate token
 SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"  # You can choose other algorithms as needed
 manager = LoginManager(SECRET_KEY, token_url="/user/signin")
 
 #dummydb
 fake_users_db = {
     "sojan@gmail.com": {
         "email": "sojan@gmail.com",
-        "password": bcrypt.hashpw("password123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        "password": bcrypt.hashpw("password123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+        "userid": "sojanct"  # Adding a user ID
     }
 }
 
@@ -57,24 +60,37 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # Token verification dependency
  
-def verify_token(request: Request):
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized access")
+# def verify_token(request: Request):
+#     token = request.cookies.get("access_token")
+#     if not token:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized access")
 
 
-    try:
-        user = manager.get_current_user(token)
-    except InvalidCredentialsException:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+#     try:
+#         user = manager.get_current_user(token)
+#     except InvalidCredentialsException:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-    return user
+#     return user
+
+@app.get("/home")
+def protected_home(request: Request, access_token: str = Cookie(None)):
+    if access_token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
+    payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+    username: str = payload.get("sub")
+    print(Style.BRIGHT + Fore.RED + f"This is a bold error message: {username}")
+    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
+    # Optionally, you can return something as well
+    #return {"access_token": f"{username} - {access_token}"}
 
 
-@app.get("/home", response_class=HTMLResponse)
-async def read_home(request: Request, user: str = Depends(verify_token)):
-    # Pass the user and request to the template
-    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": user})
+
+# @app.get("/home", response_class=HTMLResponse)
+# async def read_home(request: Request, user: str = Depends(verify_token)):
+#     # Pass the user and request to the template
+#     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": user})
 
 # @app.get("/home", response_class=HTMLResponse)
 # def read_home(user=Depends(verify_token)):
