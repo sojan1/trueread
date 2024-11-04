@@ -3,9 +3,11 @@ from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from common.shared import templates
 
-from fastapi_sqlalchemy import DBSessionMiddleware, db
-from database import DATABASE_URL, User, Base
-from sqlalchemy.exc import IntegrityError
+# from fastapi_sqlalchemy import DBSessionMiddleware, db
+# from database import DATABASE_URL, User, Base
+# from sqlalchemy.exc import IntegrityError
+
+from database import User
 from utils import add_to_database
 
 # Initialize router
