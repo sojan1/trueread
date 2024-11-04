@@ -121,7 +121,7 @@ def protected_home(request: Request, access_token: str = Cookie(None)):
 async def login(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request, "active_page": "signin"})
 
-@app.get("/success", response_class=HTMLResponse)
+@app.get("/signupsuccess", response_class=HTMLResponse)
 async def success_page(request: Request, token: str = None):
     return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
 
@@ -159,7 +159,7 @@ async def register_user(
     try:
         add_to_database(new_user)
         # Redirect to success page if successful
-        return render_template("success.html", request, context={"user": new_user})
+        return render_template("signupsuccess.html", request, context={"user": new_user})
     except HTTPException as e:
         # Redirect back with error message and pre-filled data in case of exception
         return render_template(
@@ -168,6 +168,8 @@ async def register_user(
             context={"username": username, "name": name, "email": email, "phone": phone},
             error=e.detail
         )
+
+
 
 # @app.get("/home", response_class=HTMLResponse)
 # def read_home(user=Depends(verify_token)):
