@@ -5,6 +5,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from colorama import Fore, Style, init
 import jwt
+from jwt.exceptions import InvalidTokenError
+
+
+from routes import help  # Import the help module
 
 
 #to use shared headers, 
@@ -35,6 +39,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 templates.env.cache = {}  # Disable caching
 
+app.include_router(help.router)
 
 
 #secretkey to generate token
@@ -91,11 +96,20 @@ async def read_root(request: Request):
 
 @app.get("/home")
 def protected_home(request: Request, access_token: str = Cookie(None)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},)
     if access_token is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
-    payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-    username: str = payload.get("sub")
+    try:
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+    except InvalidTokenError:
+        raise credentials_exception
+    
+    
     print(Style.BRIGHT + Fore.RED + f"This is a bold error message: {username}")
     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
     # Optionally, you can return something as well
@@ -111,11 +125,11 @@ async def login(request: Request):
 async def success_page(request: Request, token: str = None):
     return templates.TemplateResponse("signinsuccess.html", {"request": request, "token": token})
 
-#to use shared
-#app.include_router(help.router) 
-@app.get("/help", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("help.html", {"request": request, "active_page": "help"})
+# #to use shared
+# #app.include_router(help.router) 
+# @app.get("/help", response_class=HTMLResponse)
+# async def read_root(request: Request):
+#     return templates.TemplateResponse("help.html", {"request": request, "active_page": "help"})
 
 @app.get("/register", response_class=HTMLResponse)
 async def login(request: Request):
