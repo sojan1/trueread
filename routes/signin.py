@@ -30,14 +30,14 @@ ALGORITHM = "HS256"  # You can choose other algorithms as needed
 manager = LoginManager(SECRET_KEY, token_url="/user/signin")
 from database import User  # Import User model from database.py
 
-#dummydb
-fake_users_db = {
-    "sojan@gmail.com": {
-        "email": "sojan@gmail.com",
-        "password": bcrypt.hashpw("password123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
-        "userid": "sojanct"  # Adding a user ID
-    }
-}
+# #dummydb
+# fake_users_db = {
+#     "sojan@gmail.com": {
+#         "email": "sojan@gmail.com",
+#         "password": bcrypt.hashpw("password123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+#         "userid": "sojanct"  # Adding a user ID
+#     }
+# }
 
 @router.get("/signin", response_class=HTMLResponse)
 async def login(request: Request):
@@ -61,23 +61,6 @@ async def login(
     access_token = manager.create_access_token(data={"sub": email})
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True)
     return {"access_token": access_token}
-
-
-# @router.post("/user/signin")
-# def login(
-#     response: Response,  # Non-default argument first
-#     email: str = Form(...),
-#     password: str = Form(...)
-# ):
-#     #user = db.query(User).filter(User.email == email).first()
-#     user = load_user(email)
-#     if not user or not verify_password(password, user['password']):
-#         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-#     access_token = manager.create_access_token(data={"sub": email})
-#     #return RedirectResponse(url=f"/success?token={access_token}")
-#     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True)
-#     return {"access_token": access_token}
 
 
 @manager.user_loader

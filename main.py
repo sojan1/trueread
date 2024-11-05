@@ -30,12 +30,15 @@ import bcrypt
 
 
 from fastapi_sqlalchemy import DBSessionMiddleware
-from database import DATABASE_URL
+from database import DATABASE_URL, Base
 
 from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
 from fastapi_async_sqlalchemy import db  # provide access to a database session
 from sqlalchemy import column
 from sqlalchemy import table
+# from sqlalchemy import create_engine, Column, Integer, String, Enum as SQLEnum, Boolean
+# from sqlalchemy.ext.declarative import declarative_base
+
 
 # from sqlalchemy.exc import IntegrityError
 # from database import DATABASE_URL, User, Base
@@ -64,11 +67,13 @@ app.add_middleware(
     },
 )
 
+
+
+
 app.include_router(help.router)
 app.include_router(signin.router)
 app.include_router(register.router)
 app.include_router(home.router)
-
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -76,6 +81,44 @@ async def read_root(request: Request):
 
 print(Style.BRIGHT + Fore.RED + "This is a bold error message.")
 print(Style.RESET_ALL)
+
+# # Define the base model
+# Base = declarative_base()
+
+# # Example User model
+# class User(Base):
+#     __tablename__ = "users"
+#     id = Column(Integer, primary_key=True, index=True)
+#     username = Column(String, unique=True, index=True)
+
+# @app.get("/create_db")
+# async def create_db():
+#     try:
+#         async with db() as session:  # Use the async context manager
+#             # Create all tables
+#             await session.run_sync(Base.metadata.create_all, bind=session.bind)
+
+#         return {"message": "Database and tables created!"}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+# @app.get("/create_db", response_class=HTMLResponse)
+# async def create_db():
+#     # Create a synchronous engine for table creation
+#     engine = create_engine(DATABASE_URL, echo=True)
+
+#     # Create all tables in the database
+#     Base.metadata.create_all(bind=engine)
+    
+#     return JSONResponse(content={"message": "Database and tables created!"})
+
+# @app.get("/create_db", response_class=HTMLResponse)
+# async def create_db():
+#     async with db() as session:  # Use db() async context manager
+#         await session.run_sync(Base.metadata.create_all)  # Create all tables asynchronously
+
+
+
 
 
 # @app.get("/home", response_class=HTMLResponse)
