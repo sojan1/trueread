@@ -1,0 +1,19 @@
+<!-- templates/profile.html -->
+{% extends "layout.html" %}
+
+{% block title %}My Identity{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="register-container mx-auto"> <!-- Change class name here -->
+        <h3 class="text-center mb-4">My Identity</h3>
+        <form action="/did" method="POST">
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100">Create DID</button>
+            </div>
+            <p class="error-message text-danger" id="errorMessage" style="display: none;">An error occurred. Please try again.</p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

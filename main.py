@@ -12,7 +12,10 @@ from routes import help  # Import the help module
 from routes import signin # Import the signin module
 from routes import register # Import the register module
 from routes import home # Import the home module
+from routes import profile # Import the home module
+from routes import did # Import the did module
 
+id
 #to use shared headers, 
 # purpose is to use route, route allows to use prefix in subfolders
 #from routes import help
@@ -74,6 +77,9 @@ app.include_router(help.router)
 app.include_router(signin.router)
 app.include_router(register.router)
 app.include_router(home.router)
+app.include_router(profile.router)
+app.include_router(did.router)
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
