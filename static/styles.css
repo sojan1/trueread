@@ -140,6 +140,15 @@ body, html {
     padding: 0; /* Ensure no extra padding around the container */
 }
 
+.register-container {
+    max-width: 800px;
+    padding: 2rem;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: -20px; /* Negative margin to pull it closer to the navbar */
+}
+
 .login-container {
     max-width: 400px;
     padding: 2rem;
@@ -155,3 +164,6 @@ body, html {
         padding-top: 5rem; /* Adds space below navbar on larger screens */
     }
 }
+
+
+
