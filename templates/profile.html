@@ -1,13 +1,13 @@
-<!-- templates/profile.html -->
 {% extends "layout.html" %}
 
 {% block title %}User Profile - My Website{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="register-container mx-auto"> <!-- Change class name here -->
+    <div class="register-container mx-auto">
         <h3 class="text-center mb-4">My Profile</h3>
         <form action="/profile" method="POST">
+            <!-- Existing fields -->
             <div class="mb-3">
                 <label for="username" class="form-label">Username </label>
                 <input type="text" class="form-control" id="username" name="username" 
@@ -32,12 +32,71 @@
                        value="{{ phone | default('') }}">
             </div>
 
+            <!-- DID Field with Copy Icon -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <label for="did" class="form-label mb-0">DID</label>
+
+                    <!-- Tooltip or Message (optional, shown when DID is copied) -->
+                    <div id="copyTooltip" class="tooltip-message" style="display:none; margin-left: 10px; color: green;">
+                        DID copied!
+                    </div>
+                </div>
+
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control" id="did" value="234345" name="did" readonly
+                           style="background-color: #e9ecef; color: #6c757d;">
+                             <!-- Add Copy Icon (Only show if there's a value in the DID field) -->
+                    <span id="copyIcon" class="input-group-text" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Copy">
+                        <i id="copyIconClass" class="bi bi-clipboard"></i> <!-- Clipboard Icon -->
+                    </span>
+                </div>
+            </div>
+
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-100">Submit</button>
             </div>
-            <p class="error-message text-danger" id="errorMessage" style="display: none;">An error occurred. Please try again.</p>
         </form>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Enable tooltips for Bootstrap icons
+    $('[data-toggle="tooltip"]').tooltip();
+
+    const did = $('#did').val();
+
+    if (did) {
+        // Show the Copy icon and handle the click event
+        $('#copyIcon').on('click', function() {
+            const textToCopy = $('#did').val(); // Get the DID value from the input field
+            
+            // Change the icon to a tick mark when clicked
+            $('#copyIconClass').removeClass('bi-clipboard').addClass('bi-check-circle'); // Switch to a check mark icon
+
+            // Use the Clipboard API to copy the text
+            navigator.clipboard.writeText(textToCopy).then(function() {
+                // Stop any ongoing animations and then show the tooltip with a fade-in effect
+                $('#copyTooltip').stop(true, true).text('Copied!').fadeIn().delay(2000).fadeOut();
+            }).catch(function(error) {
+                alert('Failed to copy text: ' + error);
+            });
+
+            // Optional: Reset the icon back to the clipboard after a delay
+            setTimeout(() => {
+                $('#copyIconClass').removeClass('bi-check-circle').addClass('bi-clipboard'); // Switch back to clipboard icon
+            }, 2000);
+        });
+    } else {
+        // Hide the copy icon if no DID is present (optional)
+        $('#copyIcon').hide();
+    }
+});
+</script>
 
 {% endblock %}
