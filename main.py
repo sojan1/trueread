@@ -14,6 +14,7 @@ from routes import register # Import the register module
 from routes import home # Import the home module
 from routes import profile # Import the home module
 from routes import did # Import the did module
+from routes import wallet # Import the wallet module
 
 id
 #to use shared headers, 
@@ -79,6 +80,7 @@ app.include_router(register.router)
 app.include_router(home.router)
 app.include_router(profile.router)
 app.include_router(did.router)
+app.include_router(wallet.router)
 
 
 @app.get("/", response_class=HTMLResponse)
