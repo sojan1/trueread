@@ -11,13 +11,13 @@
             <div class="mb-3">
                 <label for="username" class="form-label">Username </label>
                 <input type="text" class="form-control" id="username" name="username" 
-                       value="{{ username | default('') }}" required>
+                       value="{{ user.username | default('') }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" 
-                       value="{{ name | default('') }}" required>
+                       value="{{ user.name | default('') }}" required>
             </div>
 
             <div class="mb-3">
@@ -29,7 +29,7 @@
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone</label>
                 <input type="tel" class="form-control" id="phone" name="phone" 
-                       value="{{ phone | default('') }}">
+                       value="{{ user.phone | default('') }}">
             </div>
 
              <!-- Wallet Field with Copy Icon -->

@@ -5,6 +5,7 @@ from common.shared import templates
 from fastapi_login import LoginManager
 import jwt
 from jwt.exceptions import InvalidTokenError
+from colorama import Fore, Style, init
 
 # Initialize router
 router = APIRouter()
@@ -32,12 +33,16 @@ def protected_home(request: Request, access_token: str = Cookie(None)):
 
     try:
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        request.state.user = payload
         username: str = payload.get("sub")
+
+        # request.state.user = payload
+        # user_info = getattr(request.state, "user", None)
+        # print(str(user_info))
+
     except InvalidTokenError:
         raise credentials_exception
     
     return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
     # Optionally, you can return something as well
     #return {"access_token": f"{username} - {access_token}"}
-
-
