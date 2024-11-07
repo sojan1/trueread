@@ -23,7 +23,7 @@
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" 
-                       value="{{ email | default('') }}" required>
+                value="{{ user.email | default('') }}" required>
             </div>
 
             <div class="mb-3">
@@ -31,6 +31,34 @@
                 <input type="tel" class="form-control" id="phone" name="phone" 
                        value="{{ phone | default('') }}">
             </div>
+
+             <!-- Wallet Field with Copy Icon -->
+             <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <label for="wallet" class="form-label mb-0">Wallet</label>
+
+                    <!-- Tooltip or Message (optional, shown when Wallet is copied) -->
+                    <div id="walletCopyTooltip" class="tooltip-message" style="display:none; margin-left: 10px; color: green;">
+                        Wallet copied!
+                    </div>
+                </div>
+
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control" id="wallet" value="" name="wallet" readonly
+                           style="background-color: #e9ecef; color: #6c757d;">
+                    <!-- Add Copy Icon (Only show if there's a value in the Wallet field) -->
+                    <span id="walletCopyIcon" class="input-group-text" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Copy">
+                        <i id="walletCopyIconClass" class="bi bi-clipboard"></i> <!-- bi-clipboard icon -->
+                    </span>
+                </div>
+
+                <!-- Create Wallet Link (Visible only if Wallet is empty) -->
+                <div id="createWalletLinkContainer" style="display: none;">
+                    <a href="/wallet" id="createWalletLink" class="d-block mt-2 text-primary">Create Wallet</a>
+                </div>
+                <a   id="createWalletLink" class="d-block mt-2 text-primary">CreateWallet </a>
+            </div>
+
 
             <!-- DID Field with Copy Icon -->
             <div class="mb-3">
@@ -58,6 +86,7 @@
                 </div>
             </div>
 
+           
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-100">Submit</button>
             </div>
@@ -66,57 +95,73 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"></script> -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+
+
+
 $(document).ready(function() {
     // Enable tooltips for Bootstrap icons
     $('[data-toggle="tooltip"]').tooltip();
 
-    // Cache elements for performance
+    // Cache selectors to avoid repeated DOM queries
     const $didField = $('#did');
-    const $copyIcon = $('#copyIcon');
-    const $copyIconClass = $('#copyIconClass');
+    const $walletField = $('#wallet');
     const $createDidLinkContainer = $('#createDidLinkContainer');
-    const $copyTooltip = $('#copyTooltip');
+    const $createWalletLinkContainer = $('#createWalletLinkContainer');
+    const $copyIcon = $('#copyIcon');
+    const $walletCopyIcon = $('#walletCopyIcon');
 
-    // Get the value of the DID field
-    const didValue = $didField.val();
+    // Show/hide Copy icons and Create links based on input values at page load
+    toggleFieldVisibility($didField, $copyIcon, $createDidLinkContainer);
+    toggleFieldVisibility($walletField, $walletCopyIcon, $createWalletLinkContainer);
+    
+    // Unified click event handler using delegation for Copy Icon
+    $(document).on('click', '.input-group-text', function() {
+        const $iconClass = $(this).find('i');
+        const $inputField = $(this).siblings('input');
+        const fieldValue = $inputField.val();
+        const tooltip = $(this).siblings('.tooltip-message');
 
-    // Show the Copy icon and Hide the Create DID link based on the DID field value
-    if (didValue) {
-        $copyIcon.show();
-        $createDidLinkContainer.hide();
+        // Copy only if field has a value
+        if (fieldValue) {
+            $iconClass.removeClass('bi-clipboard').addClass('bi-check-circle'); // Change icon to check-circle
+            navigator.clipboard.writeText(fieldValue).then(() => {
+                tooltip.stop(true, true).fadeIn().text('Copied!').delay(2000).fadeOut(); // Show tooltip
+                setTimeout(() => $iconClass.removeClass('bi-check-circle').addClass('bi-clipboard'), 2000); // Reset icon after 2 seconds
+            }).catch(err => console.error('Copy failed:', err)); // Handle any copy errors
+        }
+    });
 
-        // Handle Copy icon click event
-        $copyIcon.on('click', function() {
-            const textToCopy = didValue; // Use the existing value of the DID field
+    // Toggle visibility of Create DID and Create Wallet links based on Wallet value
+    $walletField.on('input', toggleVisibilityBasedOnWallet);
 
-            // Change the icon to a tick mark when clicked
-            $copyIconClass.removeClass('bi bi-clipboard').addClass('bi-check-circle');
-
-            // Use the Clipboard API to copy the text
-            navigator.clipboard.writeText(textToCopy)
-                .then(function() {
-                    // Show the tooltip with a fade-in effect
-                    $copyTooltip.stop(true, true).text('Copied!').fadeIn().delay(2000).fadeOut();
-                })
-                .catch(function(error) {
-                    alert('Failed to copy text: ' + error);
-                });
-
-            // Reset the icon after a delay
-            setTimeout(() => {
-                $copyIconClass.removeClass('bi-check-circle').addClass('bi bi-clipboard');
-            }, 2000);
-        });
-    } else {
-        // Hide the Copy icon and show the Create DID link if DID is empty
-        $copyIcon.hide();
-        $createDidLinkContainer.show();
+    // Helper functions
+    // Toggle visibility of Copy icons and Create Links (DID or Wallet)
+    function toggleFieldVisibility($field, $copyIcon, $createLink) {
+        const hasValue = $field.val();
+        $copyIcon.toggle(!!hasValue);  // Show copy icon if value exists
+        $createLink.toggle(!hasValue); // Show Create link if no value
     }
+
+    // Toggle visibility of Create DID and Create Wallet links based on Wallet value
+    function toggleVisibilityBasedOnWallet() {
+        const walletHasValue = !!$walletField.val();  // Check if Wallet field has a value
+        const didHasValue = !!$didField.val(); // Check if DID field has a value
+
+        $didField.closest('.mb-3').show(); // DID field is always visible
+        $createDidLinkContainer.toggle(walletHasValue && !didHasValue); // Show Create DID link only if Wallet has a value and DID is empty
+        $createWalletLinkContainer.toggle(!walletHasValue); // Show Create Wallet link only if Wallet is empty
+    }
+
+    // Initial check to hide/show Create DID and Create Wallet links based on Wallet field value
+    toggleVisibilityBasedOnWallet();
 });
+
 
 </script>
 
