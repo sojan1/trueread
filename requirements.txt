@@ -3,7 +3,7 @@ pydantic==2.8.0
 uvicorn==0.23.1           # ASGI server for running FastAPI
 sqlalchemy==1.4.49        # SQLAlchemy ORM
 fastapi-sqlalchemy==0.2.1  # Integration for FastAPI and SQLAlchemy
-psycopg2-binary==2.9.5   # Alternative PostgreSQL driver (for sync support)
+psycopg2-binary   # Alternative PostgreSQL driver (for sync support)
 redis==4.6.0              # Redis client for Python
 types-redis==4.0.2        # Type definitions for Redis
 jinja2==3.1.2             # Templating engine for rendering HTML
