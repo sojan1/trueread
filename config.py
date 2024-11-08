@@ -1,5 +1,6 @@
+from dotenv import load_dotenv
 import os
-
+  
 class Config:
     DB_USER = os.getenv("DB_USER", "postgres")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "dbpassword")
@@ -9,3 +10,10 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "isaid")
 
 config = Config()
+
+class AppConfig:
+    load_dotenv() # Load environment variables from a .env file
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ALGORITHM = os.getenv("ALGORITHM")
+
+appConfig = AppConfig()

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:latest
@@ -17,6 +19,12 @@ services:
       context: .  # Builds the image from the Dockerfile in the current directory
     ports:
       - "8000:80"
+    environment:  
+      DB_USER: postgres
+      DB_PASSWORD: dbpassword
+      DB_HOST: db  # Refers to the 'db' service defined in the same file
+      DB_PORT: 5432
+      DB_NAME: isaid
     networks:
       - backend
 

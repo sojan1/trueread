@@ -27,7 +27,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    username character varying,
+    displayname character varying,
     email character varying,
     password character varying,
     name character varying,
@@ -73,7 +73,8 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, username, email, password, name, phone, did, didverified, status) FROM stdin;
+COPY public.users (id, displayname, email, password, name, phone, did, didverified, status) FROM stdin;
+1	Sojan Chandy	sojan@gmail.com	$2b$12$c3pixn8a.08nm1d8OTQ2a.js5hf0fIP390TvM.77haeTcvi2P8sNS	Sojan Chandy 	234234	\N	f	ACTIVE
 \.
 
 
@@ -81,7 +82,7 @@ COPY public.users (id, username, email, password, name, phone, did, didverified,
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 
 --
@@ -101,6 +102,13 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: ix_users_displayname; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX ix_users_displayname ON public.users USING btree (displayname);
+
+
+--
 -- Name: ix_users_email; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -112,13 +120,6 @@ CREATE UNIQUE INDEX ix_users_email ON public.users USING btree (email);
 --
 
 CREATE INDEX ix_users_id ON public.users USING btree (id);
-
-
---
--- Name: ix_users_username; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX ix_users_username ON public.users USING btree (username);
 
 
 --
