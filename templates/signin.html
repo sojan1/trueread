@@ -54,7 +54,7 @@
             // If login is successful, handle the response
             const data = await response.json();
             //localStorage.setItem('token', data.access_token);
-            window.location.href = '/home'; // Redirect to success page
+            window.location.href = '/dashboard'; // Redirect to success page
             //window.location.href = '/success'; // Redirect to success page
         } else {
             // If login fails, show the error message

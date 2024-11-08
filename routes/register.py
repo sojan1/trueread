@@ -5,6 +5,7 @@ from common.shared import templates
 import bcrypt
 from fastapi_async_sqlalchemy import db
 from database import User
+from typing import Optional
 
 # from fastapi_sqlalchemy import DBSessionMiddleware, db
 # from database import DATABASE_URL, User, Base
@@ -37,7 +38,7 @@ async def register_user(
     confirm_password: str = Form(...),
     name: str = Form(...),
     email: str = Form(...),
-    phone: str = Form(...)
+    phone: Optional[str] = Form(None)
 ):
     
     if password != confirm_password:

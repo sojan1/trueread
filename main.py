@@ -11,7 +11,7 @@ from jwt.exceptions import InvalidTokenError
 from routes import help  # Import the help module
 from routes import signin # Import the signin module
 from routes import register # Import the register module
-from routes import home # Import the home module
+from routes import dashboard # Import the home module
 from routes import profile # Import the home module
 from routes import did # Import the did module
 from routes import wallet # Import the wallet module
@@ -78,7 +78,7 @@ app.add_middleware(
 app.include_router(help.router)
 app.include_router(signin.router)
 app.include_router(register.router)
-app.include_router(home.router)
+app.include_router(dashboard.router)
 app.include_router(profile.router)
 app.include_router(did.router)
 app.include_router(wallet.router)
