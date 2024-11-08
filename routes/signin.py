@@ -58,6 +58,7 @@ async def login(
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    #page is redirected using ajax in signin page to /home
     access_token = manager.create_access_token(data={"sub": email})
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True)
     return {"access_token": access_token}

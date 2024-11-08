@@ -15,6 +15,7 @@ from routes import home # Import the home module
 from routes import profile # Import the home module
 from routes import did # Import the did module
 from routes import wallet # Import the wallet module
+from routes import logout # Import the logout module
 
 id
 #to use shared headers, 
@@ -81,7 +82,7 @@ app.include_router(home.router)
 app.include_router(profile.router)
 app.include_router(did.router)
 app.include_router(wallet.router)
-
+app.include_router(logout.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -97,7 +98,7 @@ print(Style.RESET_ALL)
 # class User(Base):
 #     __tablename__ = "users"
 #     id = Column(Integer, primary_key=True, index=True)
-#     username = Column(String, unique=True, index=True)
+#     displayname = Column(String, unique=True, index=True)
 
 # @app.get("/create_db")
 # async def create_db():

@@ -34,7 +34,7 @@ def protected_home(request: Request, access_token: str = Cookie(None)):
     try:
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         request.state.user = payload
-        username: str = payload.get("sub")
+        user_info: str = payload.get("sub")
 
         # request.state.user = payload
         # user_info = getattr(request.state, "user", None)
@@ -43,6 +43,6 @@ def protected_home(request: Request, access_token: str = Cookie(None)):
     except InvalidTokenError:
         raise credentials_exception
     
-    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": username})
+    return templates.TemplateResponse("home.html", {"request": request, "active_page": "home", "user": user_info})
     # Optionally, you can return something as well
     #return {"access_token": f"{username} - {access_token}"}

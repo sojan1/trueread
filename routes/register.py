@@ -32,7 +32,7 @@ async def login(request: Request):
 @router.post("/register")
 async def register_user(
     request: Request,
-    username: str = Form(...),
+    displayname: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...),
     name: str = Form(...),
@@ -44,7 +44,7 @@ async def register_user(
         return render_template(
             "register.html",
             request,
-            context={"username": username, "name": name, "email": email, "phone": phone},
+            context={"displayname": displayname, "name": name, "email": email, "phone": phone},
             error="Passwords do not match"
         )
         
@@ -52,7 +52,7 @@ async def register_user(
 
         
     
-    new_user = User(username=username, password=password, name=name, email=email, phone=phone)
+    new_user = User(displayname=displayname, password=password, name=name, email=email, phone=phone)
     new_user.password=bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     try:
         # Use the session from SQLAlchemyMiddleware
@@ -67,7 +67,7 @@ async def register_user(
         return render_template(
             "register.html",
             request,
-            context={"username": username, "name": name, "email": email, "phone": phone},
+            context={"displayname": displayname, "name": name, "email": email, "phone": phone},
             error=e.detail
         )
     except Exception as e:
@@ -75,7 +75,7 @@ async def register_user(
         return render_template(
             "register.html",
             request,
-            context={"username": username, "name": name, "email": email, "phone": phone},
+            context={"displayname": displayname, "name": name, "email": email, "phone": phone},
             error=str(e)  # Show the error message
         )
     # try:
@@ -87,7 +87,7 @@ async def register_user(
     #     return render_template(
     #         "register.html",
     #         request,
-    #         context={"username": username, "name": name, "email": email, "phone": phone},
+    #         context={"displayname": displayname, "name": name, "email": email, "phone": phone},
     #         error=e.detail
     #     )
 

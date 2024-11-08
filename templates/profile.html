@@ -9,9 +9,9 @@
         <form action="/profile" method="POST">
             <!-- Existing fields -->
             <div class="mb-3">
-                <label for="username" class="form-label">Username </label>
-                <input type="text" class="form-control" id="username" name="username" 
-                       value="{{ user.username | default('') }}" required>
+                <label for="displayname" class="form-label">Display Name </label>
+                <input type="text" class="form-control" id="displayname" name="displayname" 
+                       value="{{ user.displayname | default('') }}" required>
             </div>
 
             <div class="mb-3">
