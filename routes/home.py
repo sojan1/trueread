@@ -13,9 +13,9 @@ router = APIRouter()
 templates.env.cache = {}  # Disable caching if needed
 
 #secretkey to generate token
-# SECRET_KEY = "your_secret_key"
-# ALGORITHM = "HS256"  # You can choose other algorithms as needed
-# manager = LoginManager(SECRET_KEY, token_url="/user/signin")
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"  # You can choose other algorithms as needed
+manager = LoginManager(SECRET_KEY, token_url="/user/signin")
 
 
 # Define the /help route
