@@ -26,7 +26,7 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.users (
-    id integer NOT NULL,
+    id uuid NOT NULL,
     displayname character varying,
     email character varying,
     password character varying,
@@ -41,48 +41,12 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.users_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.users (id, displayname, email, password, name, phone, did, didverified, status) FROM stdin;
-1	Sojan Chandy	sojan@gmail.com	$2b$12$c3pixn8a.08nm1d8OTQ2a.js5hf0fIP390TvM.77haeTcvi2P8sNS	Sojan Chandy 	234234	\N	f	ACTIVE
+2a32007c-4612-43fd-9d26-957581b2fd86	Sojan	sojan@gmail.com	$2b$12$h8PkY7ywteeB0O4HxtAwa.HoaMnvbZAq/to/GZK3hoIWFd.lfs99y	Sojan Chandy 	123456	\N	f	ACTIVE
 \.
-
-
---
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 
 --
@@ -113,13 +77,6 @@ CREATE UNIQUE INDEX ix_users_displayname ON public.users USING btree (displaynam
 --
 
 CREATE UNIQUE INDEX ix_users_email ON public.users USING btree (email);
-
-
---
--- Name: ix_users_id; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX ix_users_id ON public.users USING btree (id);
 
 
 --

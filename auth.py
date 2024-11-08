@@ -30,7 +30,7 @@ def get_current_user(request: Request, access_token: str = Cookie(None)):
 
 # creates access token
 def get_access_token(userid,email):
-    expiration_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expiration_time = timedelta(minutes=AppConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = manager.create_access_token(
         data={"sub": userid, "email": email},  # Convert UUID to string
         expires=expiration_time)  # Pass the calculated expiration time
