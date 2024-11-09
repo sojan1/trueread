@@ -7,12 +7,8 @@ from fastapi_async_sqlalchemy import db
 from database import User
 from typing import Optional
 
-# from fastapi_sqlalchemy import DBSessionMiddleware, db
-# from database import DATABASE_URL, User, Base
-# from sqlalchemy.exc import IntegrityError
-
 from database import User
-from utils import add_to_database
+#from utils import add_to_database
 
 # Initialize router
 router = APIRouter()

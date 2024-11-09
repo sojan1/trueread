@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from database import engine, Base #,SessionLocal
 from sqlalchemy import select, update, insert, delete  # Import select from sqlalchemy
 # Import User model from database.py
+from database_execute_async import profile_query, profile_command
 
 from fastapi_async_sqlalchemy import db
 from database import User
@@ -18,8 +19,14 @@ router = APIRouter()
 templates.env.cache = {}  # Disable caching if needed
 
 
-
-#user = await get_user_by_email(db, user_info_auth.email)
+# async def exec(email):
+#     async with db():
+#         # Use select from sqlalchemy to create the query
+#         stmt = select(User).where(User.email == email)
+#         result = await db.session.execute(stmt)
+#         user = result.scalar_one_or_none()  # Get the user or None
+#         return user
+ 
 
 # Define the /profile route
 @router.get("/profile", response_class=HTMLResponse)
@@ -27,16 +34,18 @@ templates.env.cache = {}  # Disable caching if needed
 #async def read_profile(request: Request):
 async def read_profile(request: Request, access_token: str = Cookie(None)):
     user_info_auth = get_current_user(request, access_token) 
-    
-    async with db():
-        # Use select from sqlalchemy to create the query
-        stmt = select(User).where(User.email == user_info_auth.email)
-        result = await db.session.execute(stmt)
-        user = result.scalar_one_or_none()  # Get the user or None
+
+    user = await profile_query(user_info_auth.email);
+
+    # async with db():
+    #     # Use select from sqlalchemy to create the query
+    #     stmt = select(User).where(User.email == user_info_auth.email)
+    #     result = await db.session.execute(stmt)
+    #     user = result.scalar_one_or_none()  # Get the user or None
         
 
 
-        context = {
+    context = {
         "request": request,
         "active_page": "profile",
         "user": user
@@ -46,29 +55,28 @@ async def read_profile(request: Request, access_token: str = Cookie(None)):
     #return templates.TemplateResponse("profile.html", {"request": request, "active_page": "profile"})
 
 
+
+
 @router.post("/profile", response_class=HTMLResponse)
 async def edit_profile(
     request: Request,
     phone: Optional[str] = Form(None), access_token: str = Cookie(None)
 ):
     user_info_auth = get_current_user(request, access_token) 
-    async with db():
-        
-         stmt = update(User).where(User.email == user_info_auth.email).values(phone=phone)
+    #async with db():
+    # stmt = update(User).where(User.email == user_info_auth.email).values(phone=phone)
+    # result = await db.session.execute(stmt)
+    # await db.session.commit()
 
-         stmt = (stmt)
-         result = await db.session.execute(stmt)
-         await db.session.commit()
+    await profile_command(user_info_auth.email,phone)
 
-
-                 # Use select from sqlalchemy to create the query
-         stmt = select(User).where(User.email == user_info_auth.email)
-         result = await db.session.execute(stmt)
-         user = result.scalar_one_or_none()  # Get the user or None
+    # Use select from sqlalchemy to create the query
+    stmt = select(User).where(User.email == user_info_auth.email)
+    result = await db.session.execute(stmt)
+    user = result.scalar_one_or_none()  # Get the user or None
         
 
-
-         context = {
+    context = {
         "request": request,
         "active_page": "profile",
         "user": user
