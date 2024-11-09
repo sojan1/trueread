@@ -11,3 +11,8 @@ DATABASE_URL = f"postgresql+asyncpg://{config.DB_USER}:{config.DB_PASSWORD}@{con
 # Create the synchronous engine and session
 engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
