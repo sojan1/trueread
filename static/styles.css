@@ -167,3 +167,6 @@ body, html {
 
 
 
+input:read-only {
+    color: #d52057; /* Set text color to red */
+}

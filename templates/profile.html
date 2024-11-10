@@ -10,19 +10,19 @@
             <!-- Existing fields -->
             <div class="mb-3">
                 <label for="displayname" class="form-label">Display Name </label>
-                <input type="text" class="form-control" id="displayname" name="displayname" 
+                <input type="text" class="form-control" id="displayname" name="displayname"   
                        value="{{ user.displayname | default('') }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" 
+                <input type="text" class="form-control" id="name" name="name" readonly  
                        value="{{ user.name | default('') }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" 
+                <input type="email" class="form-control" id="email" name="email" readonly  
                 value="{{ user.email | default('') }}" required>
             </div>
 
@@ -46,6 +46,7 @@
                 <div class="input-group mt-2">
                     <input type="text" class="form-control" id="wallet" value="" name="wallet" readonly
                            style="background-color: #e9ecef; color: #6c757d;">
+                    
                     <!-- Add Copy Icon (Only show if there's a value in the Wallet field) -->
                     <span id="walletCopyIcon" class="input-group-text" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Copy">
                         <i id="walletCopyIconClass" class="bi bi-clipboard"></i> <!-- bi-clipboard icon -->
@@ -54,7 +55,9 @@
 
                 <!-- Create Wallet Link (Visible only if Wallet is empty) -->
                 <div id="createWalletLinkContainer" style="display: none;">
-                    <a href="/wallet" id="createWalletLink" class="d-block mt-2 text-primary">Create Wallet</a>
+                    <input type="text" id="hidden_wallet" name="hidden_wallet" value="">
+                    <a href="#" id="createWalletLink" class="d-block mt-2 text-primary">Create Wallet</a>
+                    <!-- <a href="/wallet" id="createWalletLink" class="d-block mt-2 text-primary">Create Wallet</a> -->
                 </div>
                 <!-- <a   id="createWalletLink" class="d-block mt-2 text-primary">CreateWallet </a> -->
             </div>
@@ -100,6 +103,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    const createWalletLink = document.getElementById("createWalletLink");
+    const displaynameField = document.getElementById("displayname");
+    const nameField = document.getElementById("name");
+    const emailField = document.getElementById("email");
+    const phoneField = document.getElementById("phone");
+    const walletField = document.getElementById("wallet"); // reference to the wallet field
+    const hiddenWalletField = document.getElementById("hidden_wallet"); // reference to the wallet field
+
+
+    createWalletLink.addEventListener("click", async (event) => {
+        event.preventDefault(); // Prevent default link behavior
+
+        try {
+            // Collect data from the form fields (only the required fields)
+            const data = {
+                displayname: displaynameField.value,
+                name: nameField.value,
+                email: emailField.value,
+                phone: phoneField.value
+            };
+
+            // Send POST request with form data
+            const response = await fetch('/wallet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) throw new Error("Failed to create wallet");
+
+            const result = await response.json();
+
+            // Assuming the response contains the wallet address
+            const walletAddress = result.wallet_id;
+
+            if (walletAddress) {
+                // Set the wallet address in the wallet field
+                walletField.value = walletAddress;
+                hiddenWalletField.value = walletAddress;
+            }
+
+            console.log(result); // You can check the response here
+            // Optionally, you can update some UI elements based on the result
+        } catch (error) {
+            console.error("Error creating wallet:", error);
+            alert("An error occurred while creating the wallet.");
+        }
+    });
+});
+
 
 
 

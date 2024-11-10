@@ -1,11 +1,90 @@
-<!-- templates/profile.html -->
+templates/profile.html
 {% extends "layout.html" %}
 
 {% block title %}My Identity{% endblock %}
 
 {% block content %}
+
 <div class="container">
-    <div class="register-container mx-auto"> <!-- Change class name here -->
+    <div class="register-container mx-auto">
+        <h3 class="text-center mb-4">My Identity</h3>
+        <form id="didForm" action="/did" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="identityType" class="form-label">Identity Type</label>
+                <select class="form-control" id="identityType" name="identityType" required>
+                    <option value="passport">Passport</option>
+                    <option value="driver_license">Driver's License</option>
+                    <option value="national_id">National ID</option>
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100">Create DID</button>
+            </div>
+            <p class="error-message text-danger" id="errorMessage" aria-live="polite" style="display: none;">
+                An error occurred. Please try again.
+            </p>
+            <p class="success-message text-success" id="successMessage" aria-live="polite" style="display: none;">
+                DID created successfully!
+            </p>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("didForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const errorMessage = document.getElementById("errorMessage");
+        const successMessage = document.getElementById("successMessage");
+        errorMessage.style.display = "none";
+        successMessage.style.display = "none";
+
+        // Collect form data
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const identityType = document.getElementById("identityType").value;
+
+        try {
+            const response = await fetch("/did", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    identityType: identityType
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await response.json();
+            successMessage.style.display = "block";
+            successMessage.textContent = JSON.stringify(result, null, 2); //"DID created successfully!";
+        } catch (error) {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "An error occurred. Please try again.";
+            console.error("Error:", error);
+        }
+    });
+</script>
+
+
+{% endblock %}
+
+<!-- <div class="container">
+    <div class="register-container mx-auto">  
         <h3 class="text-center mb-4">My Identity</h3>
         <form action="/did" method="POST">
             <div class="text-center">
@@ -14,6 +93,4 @@
             <p class="error-message text-danger" id="errorMessage" style="display: none;">An error occurred. Please try again.</p>
         </form>
     </div>
-</div>
-
-{% endblock %}
+</div> -->

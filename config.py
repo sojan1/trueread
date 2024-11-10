@@ -18,3 +18,12 @@ class AppConfig:
     ACCESS_TOKEN_EXPIRE_MINUTES= int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 appConfig = AppConfig()
+
+
+class NodeConfig:
+    load_dotenv() # Load environment variables from a .env file
+    node_url = os.environ.get('NODE_URL', 'https://api.testnet.shimmer.network')
+    STRONGHOLD_PASSWORD = os.getenv("STRONGHOLD_PASSWORD")
+
+
+nodeConfig = NodeConfig()
