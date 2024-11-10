@@ -167,6 +167,27 @@ body, html {
 
 
 
-input:read-only {
-    color: #d52057; /* Set text color to red */
+.mnemonic-container {
+    display: flex;
+    flex-wrap: wrap;   /* Allow words to wrap to the next line if needed */
+    gap: 8px;          /* Spacing between words */
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+}
+
+.mnemonic-container span {
+    display: inline-block;  /* Each word becomes a block that can be styled */
+    padding: 8px 16px;
+    background-color: #f0f0f5;
+    border-radius: 12px;    /* Rounded corners for each word */
+    font-size: 1.2em;
+    margin: 4px;
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.mnemonic-container span:hover {
+    background-color: #ddd; /* Change background color on hover */
+    transform: scale(1.1);   /* Scale the word slightly */
+    color: #d52057;
 }

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from common.shared import templates, Req, HTMLRes
 from fastapi.responses import JSONResponse
+from config import NodeConfig 
 
 import os
 from dotenv import load_dotenv
@@ -24,18 +25,23 @@ async def register_user(
     request: Request
 ):
     
-    node_url = os.environ.get('NODE_URL', 'https://api.testnet.shimmer.network')
+    #node_url = os.environ.get('NODE_URL', 'https://api.testnet.shimmer.network')
+    #print(str(node_url))
+
+    node_url = NodeConfig.NODE_URL
     client_options = ClientOptions(nodes=[node_url])
-
-
+    STRONGHOLD_PASSWORD = NodeConfig.STRONGHOLD_PASSWORD
+    STRONGHOLD_SNAPSHOT_PATH = NodeConfig.STRONGHOLD_SNAPSHOT_PATH
 
     # A password to encrypt the stored data.
     # WARNING: Never hardcode passwords in production code.
-    STRONGHOLD_PASSWORD = os.environ.get(
-        'STRONGHOLD_PASSWORD', 'a-secure-password')
+    # STRONGHOLD_PASSWORD = os.environ.get(
+    #     'STRONGHOLD_PASSWORD', 'a-secure-password')
+    
+    
 
-    # The path to store the account snapshot.
-    STRONGHOLD_SNAPSHOT_PATH = 'vault.stronghold'
+    # # The path to store the account snapshot.
+    # STRONGHOLD_SNAPSHOT_PATH = 'vault.stronghold'
 
 
     if os.path.exists(STRONGHOLD_SNAPSHOT_PATH):

@@ -7,6 +7,8 @@ from typing import NamedTuple
 
 from datetime import datetime, timedelta
 from fastapi_login import LoginManager
+
+#need to be removed
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 manager = LoginManager(AppConfig.SECRET_KEY, token_url="/user/signin")

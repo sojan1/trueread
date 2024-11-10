@@ -22,8 +22,8 @@ appConfig = AppConfig()
 
 class NodeConfig:
     load_dotenv() # Load environment variables from a .env file
-    node_url = os.environ.get('NODE_URL', 'https://api.testnet.shimmer.network')
+    NODE_URL = os.getenv("NODE_URL")
     STRONGHOLD_PASSWORD = os.getenv("STRONGHOLD_PASSWORD")
-
+    STRONGHOLD_SNAPSHOT_PATH = os.getenv("STRONGHOLD_SNAPSHOT_PATH")
 
 nodeConfig = NodeConfig()
