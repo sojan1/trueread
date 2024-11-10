@@ -5,6 +5,12 @@
 {% block content %}
 <div class="container">
     <div class="register-container mx-auto">
+
+ 
+
+
+
+
         <h3 class="text-center mb-4">My Profile</h3>
         <form action="/profile" method="POST">
             <!-- Existing fields -->
@@ -101,11 +107,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Copy phrases and store safely</h5>
+                <h5 class="modal-title">Store phrases safely</h5>
+                <p class="small-text text-muted">Losing the below will result in losing access to your wallet. Please kindly store the phrases somewhere safe.</p>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <p id="mnemonicText" class="mnemonic-container bs-primary-bg-subtle fw-bold"></p>
+                <button id="downloadBtn" class="btn btn-primary mt-3">Download Screenshot</button>
             </div>
         </div>
     </div>
@@ -119,6 +127,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script> -->
 
 <script>
+
+
 
 document.addEventListener("DOMContentLoaded", function() {
     const createWalletLink = document.getElementById("createWalletLink");
@@ -206,7 +216,39 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error("Error creating wallet:", error);
             alert("An error occurred while creating the wallet.");
         }
+        
     });
+
+ 
+
+    $(document).ready(function() {
+
+// Example code to download the screenshot of the mnemonic text when the button is clicked
+$('#downloadBtn').on('click', function() {
+    const mnemonicText = document.getElementById('mnemonicText'); // Get the element to capture
+
+    if (window.html2canvas) {
+        html2canvas(mnemonicText).then(function(canvas) {
+            // Create an anchor element to download the canvas as an image
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL(); // Converts canvas to base64 image data
+            link.download = 'mnemonic-screenshot.png'; // Set the download file name
+            link.click(); // Programmatically click the download link
+        }).catch(function(error) {
+            console.error('Error generating screenshot:', error);
+        });
+    } else {
+        console.error("html2canvas library not loaded!");
+    }
+});
+
+});
+
+
+
+
+
+
 });
 
 
@@ -214,6 +256,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 $(document).ready(function() {
+
+ // Example code using html2canvas
+ $('#captureButton').on('click', function() {
+           if (window.html2canvas) {
+               html2canvas(document.querySelector("#capture")).then(canvas => {
+                   document.body.appendChild(canvas); // This will append the captured canvas to the body
+               }).catch(err => console.error('html2canvas error:', err));
+           } else {
+               console.error("html2canvas library not loaded!");
+           }
+       });
+
+
+
+
     // Enable tooltips for Bootstrap icons
     $('[data-toggle="tooltip"]').tooltip();
 

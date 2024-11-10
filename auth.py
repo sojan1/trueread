@@ -20,6 +20,8 @@ class UserInfo(NamedTuple):
     email: str
 
 # get userinfo from token
+#return error like userinfo to avoid error when token expires
+#result = UserInfo(userid="error", email="Token has expired. Please log in again.")
 def get_current_user(request: Request, access_token: str = Cookie(None)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
