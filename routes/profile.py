@@ -24,9 +24,7 @@ templates.env.cache = {}  # Disable caching if needed
 
 #async def read_profile(request: Request):
 async def read_profile(request: Request, access_token: str = Cookie(None)):
-    
-    
-    
+
     user_info_auth = get_current_user(request, access_token) 
     print(user_info_auth)
     user = await profile_query(user_info_auth.email);

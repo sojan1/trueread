@@ -45,7 +45,6 @@ def get_current_user(request: Request, access_token: str = Cookie(None)):
         # Handle case where the token is invalid
         print("Invalid token. Please provide a valid token.")
         return {"error": credentials_exception}
-        #raise credentials_exception
     except Exception as e:
         # Catch any other exceptions that may occur
         print(f"An error occurred: {str(e)}")

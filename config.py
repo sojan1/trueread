@@ -25,5 +25,5 @@ class NodeConfig:
     NODE_URL = os.getenv("NODE_URL")
     STRONGHOLD_PASSWORD = os.getenv("STRONGHOLD_PASSWORD")
     STRONGHOLD_SNAPSHOT_PATH = os.getenv("STRONGHOLD_SNAPSHOT_PATH")
-
+    WALLET_DB_PATH = os.getenv("WALLET_DB_PATH")
 nodeConfig = NodeConfig()
