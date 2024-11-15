@@ -1,33 +1,60 @@
 # routes/wallet.py
-from fastapi import APIRouter, Request, Cookie
+from fastapi import APIRouter, Request, Cookie, HTTPException, status
 from fastapi.responses import HTMLResponse
 from common.shared import templates, Req, HTMLRes
 from fastapi.responses import JSONResponse
+import httpx
 from config import NodeConfig 
 import json
-from auth import get_current_user 
+import jwt
+
+from auth import get_current_user, decode_jwt_token
 import os
 from dotenv import load_dotenv
 from iota_sdk import (ClientOptions, CoinType, StrongholdSecretManager, Utils,
                       Wallet)
+
+from config import AppConfig 
 load_dotenv()
 
 router = APIRouter()
 templates.env.cache = {}  # Disable caching if needed
 
 
+# def decode_jwt_token(access_token: str):
+#     try:
+#         payload = jwt.decode(access_token, AppConfig.SECRET_KEY, algorithms=[AppConfig.ALGORITHM])
+#         user_info = {"userid": payload.get("sub"), "email": payload.get("email")}
+#         return user_info
+#     except jwt.ExpiredSignatureError:
+#         raise Exception("Token has expired")
+#     except jwt.JWTError as e:
+#         raise Exception(f"Invalid token: {str(e)}")
+
+
 # Define the /wallet route
 @router.get("/wallet", response_class=HTMLResponse)
 async def read_wallet(request: Request, access_token: str = Cookie(None)):
 
-    if access_token is not None:
-        user_info = get_current_user(request, access_token)  # Use get_current_user for authentication
-    else : raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    
-    if (user_info.email):
-        path="./"+user_info.email+"/vault.stronghold"
+    if not access_token:
+        return templates.TemplateResponse("error.html", {"request": request, "active_page": "error", "exception": "No token provided"})
 
-    print("print################# :"+ user_info.email)
+    try:
+        user_info = decode_jwt_token(access_token)
+        user_id = user_info["userid"]
+        user_email = user_info["email"]
+        print(user_id)
+        print(user_email)
+
+    except Exception as e:
+        error_message = str(e)  
+        return templates.TemplateResponse("error.html", {"request": request, "active_page": "error", "exception": error_message})
+        #raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token error: {error_message}")
+    
+    if (user_email):
+        path="./"+user_email+"/vault.stronghold"
+
+    print("print################# :"+ user_email)
 
     client_options = ClientOptions(nodes=[NodeConfig.NODE_URL])
     STRONGHOLD_PASSWORD = NodeConfig.STRONGHOLD_PASSWORD
@@ -51,6 +78,13 @@ async def read_wallet(request: Request, access_token: str = Cookie(None)):
     # Just calculate the balance with the known state
     balance = account.get_balance()
     print(f'Balance {json.dumps(balance.as_dict(), indent=4)}')
+
+
+
+
+
+
+
 
 
 
@@ -81,9 +115,15 @@ async def register_user(
     STRONGHOLD_SNAPSHOT_PATH = NodeConfig.STRONGHOLD_SNAPSHOT_PATH
     WALLET_DB_PATH = NodeConfig.WALLET_DB_PATH
  
+    user_info = get_current_user(request, access_token) 
+    if(user_info.email):
+        path="./"+user_info.email+"/vault.stronghold"
+
+    NodeConfig.STRONGHOLD_SNAPSHOT_PATH = path
 
     print("STRONGHOLD_SNAPSHOT_PATH:", NodeConfig.STRONGHOLD_SNAPSHOT_PATH)
 
+    #need to be removed later
     if os.path.exists(NodeConfig.STRONGHOLD_SNAPSHOT_PATH):
         os.remove(NodeConfig.STRONGHOLD_SNAPSHOT_PATH)
         print("Existing Stronghold vault and accounts deleted.")
@@ -92,9 +132,6 @@ async def register_user(
 
 
 
-    user_info = get_current_user(request, access_token) 
-    if(user_info.email):
-        path="./"+user_info.email+"/vault.stronghold"
 
     secret_manager = StrongholdSecretManager(
     path, STRONGHOLD_PASSWORD)

@@ -4,6 +4,8 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 #from .config import SECRET_KEY, ALGORITHM  # Ensure SECRET_KEY and ALGORITHM are accessible
 from config import AppConfig  # Ensure SECRET_KEY and ALGORITHM are accessible
 from typing import NamedTuple
+from fastapi.responses import JSONResponse
+from datetime import datetime, timezone
 
 from datetime import datetime, timedelta
 from fastapi_login import LoginManager
@@ -18,6 +20,18 @@ manager = LoginManager(AppConfig.SECRET_KEY, token_url="/user/signin")
 class UserInfo(NamedTuple):
     userid: str
     email: str
+
+
+def decode_jwt_token(access_token: str):
+    try:
+        payload = jwt.decode(access_token, AppConfig.SECRET_KEY, algorithms=[AppConfig.ALGORITHM])
+        user_info = {"userid": payload.get("sub"), "email": payload.get("email")}
+        return user_info
+    except jwt.ExpiredSignatureError:
+        raise Exception("Token has expired")
+    except jwt.JWTError as e:
+        raise Exception(f"Invalid token: {str(e)}")
+
 
 # get userinfo from token
 #return error like userinfo to avoid error when token expires
