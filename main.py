@@ -16,8 +16,10 @@ from routes import profile # Import the home module
 from routes import did # Import the did module
 from routes import wallet # Import the wallet module
 from routes import logout # Import the logout module
+from routes import walletcreate # Import the logout module
 
-id
+
+
 #to use shared headers, 
 # purpose is to use route, route allows to use prefix in subfolders
 #from routes import help
@@ -83,6 +85,9 @@ app.include_router(profile.router)
 app.include_router(did.router)
 app.include_router(wallet.router)
 app.include_router(logout.router)
+app.include_router(walletcreate.router)
+
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

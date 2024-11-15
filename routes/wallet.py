@@ -13,7 +13,7 @@ import os
 from dotenv import load_dotenv
 from iota_sdk import (ClientOptions, CoinType, StrongholdSecretManager, Utils,
                       Wallet)
-
+from iota_sdk import Client, NodeIndexerAPI
 from config import AppConfig 
 load_dotenv()
 
@@ -50,34 +50,81 @@ async def read_wallet(request: Request, access_token: str = Cookie(None)):
         error_message = str(e)  
         return templates.TemplateResponse("error.html", {"request": request, "active_page": "error", "exception": error_message})
         #raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token error: {error_message}")
+
+
+#rms1qpa5tyx8kvkszrxd7t2mem8r8fazxaqgz8dnqzw0vsl9x4e8l5pe2tg45vc
     
-    if (user_email):
-        path="./"+user_email+"/vault.stronghold"
+ 
+    node_url = os.environ.get('NODE_URL', 'https://api.testnet.shimmer.network')
 
-    print("print################# :"+ user_email)
+    # Create a Client instance
+    client = Client(nodes=[node_url])
 
-    client_options = ClientOptions(nodes=[NodeConfig.NODE_URL])
-    STRONGHOLD_PASSWORD = NodeConfig.STRONGHOLD_PASSWORD
-    STRONGHOLD_SNAPSHOT_PATH = path #NodeConfig.STRONGHOLD_SNAPSHOT_PATH
-
-    # Setup Stronghold secret manager
-    secret_manager = StrongholdSecretManager(
-        STRONGHOLD_SNAPSHOT_PATH, STRONGHOLD_PASSWORD)
-
-    
-    wallet = Wallet(
-        client_options=client_options,
-        coin_type=CoinType.SHIMMER,
-        secret_manager=secret_manager
+    ADDRESS = 'rms1qpa5tyx8kvkszrxd7t2mem8r8fazxaqgz8dnqzw0vsl9x4e8l5pe2tg45vc'
+    query_parameters = NodeIndexerAPI.QueryParameters(
+        ADDRESS,
+        has_expiration=False,
+        has_timelock=False,
+        has_storage_deposit_return=False
     )
-    account = wallet.get_account('Alice')
 
-# Sync account with the node
-    _balance = account.sync()
+    # Get output ids of basic outputs that can be controlled by this address
+    # without further unlock constraints.
+    output_ids_response = client.basic_output_ids(query_parameters)
+    print(f'{output_ids_response.items}')
 
-    # Just calculate the balance with the known state
-    balance = account.get_balance()
-    print(f'Balance {json.dumps(balance.as_dict(), indent=4)}')
+    # Get the outputs by their id
+    outputs = client.get_outputs(output_ids_response.items)
+    print(f'{outputs}')
+
+
+    # Calculate the total amount and native tokens
+    total_amount = 0
+    native_tokens = []
+    for output_with_metadata in outputs:
+        output = output_with_metadata.output
+        total_amount += int(output.amount)
+        if output.nativeTokens:
+            native_tokens.append(output.nativeTokens)
+
+    print(
+        f'Outputs controlled by {ADDRESS} have {total_amount} glow and native tokens: {native_tokens}')
+
+
+
+
+
+
+
+
+#     #load local starts
+#     if (user_email):
+#         path="./"+user_email+"/vault.stronghold"
+
+#     print("print################# :"+ user_email)
+
+#     client_options = ClientOptions(nodes=[NodeConfig.NODE_URL])
+#     STRONGHOLD_PASSWORD = NodeConfig.STRONGHOLD_PASSWORD
+#     STRONGHOLD_SNAPSHOT_PATH = path #NodeConfig.STRONGHOLD_SNAPSHOT_PATH
+
+#     # Setup Stronghold secret manager
+#     secret_manager = StrongholdSecretManager(
+#         STRONGHOLD_SNAPSHOT_PATH, STRONGHOLD_PASSWORD)
+
+    
+#     wallet = Wallet(
+#         client_options=client_options,
+#         coin_type=CoinType.SHIMMER,
+#         secret_manager=secret_manager
+#     )
+#     account = wallet.get_account('Alice')
+
+# # Sync account with the node
+#     _balance = account.sync()
+
+#     # Just calculate the balance with the known state
+#     balance = account.get_balance()
+#     print(f'Balance {json.dumps(balance.as_dict(), indent=4)}')
 
 
 

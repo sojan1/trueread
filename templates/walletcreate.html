@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block title %}My Wallet{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="register-container mx-auto">
+        <h3 class="text-center mb-4">My Identity</h3>
+        <form id="walletForm">
+            <!-- Wallet Name Field -->
+            <div class="mb-3">
+                <label for="walletName" class="form-label">Wallet Name</label>
+                <input type="text" id="walletName" name="wallet_name" class="form-control" placeholder="Enter your wallet name" required>
+            </div>
+
+            <!-- Stronghold Password Field -->
+            <div class="mb-3">
+                <label for="strongholdPassword" class="form-label">Stronghold Password</label>
+                <input type="password" id="strongholdPassword" name="stronghold_password" class="form-control" placeholder="Enter your stronghold password" required>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirm_password" class="form-control" placeholder="Confirm your stronghold password" required>
+            </div>
+
+            <!-- Error Message -->
+            <p id="passwordError" class="text-danger" style="display: none;">Passwords should match.</p>
+
+            <!-- Success Message -->
+            <p id="successMessage" class="text-success" style="display: none;"></p>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="button" class="btn btn-primary w-100" onclick="submitForm()">Create Wallet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="mnemonicModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Store phrases safely</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="mnemonicText" class="mnemonic-container text-center fw-bold"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="downloadBtn">Download Screenshot</button>
+                <button type="button" class="btn btn-primary" id="download-btn">
+                    <a id="download-link" href="#" download="vault.stronghold" style="color: white;">Download Vault</a>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function submitForm() {
+        const walletName = document.getElementById('walletName').value;
+        const strongholdPassword = document.getElementById('strongholdPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const passwordError = document.getElementById('passwordError');
+        const successMessage = document.getElementById('successMessage');
+        const mnemonicText = document.getElementById("mnemonicText");
+        const mnemonicModal = new bootstrap.Modal(document.getElementById("mnemonicModal"));
+
+        // Clear previous error and success messages
+        passwordError.style.display = 'none';
+        successMessage.style.display = 'none';
+
+        // Validate passwords
+        if (strongholdPassword !== confirmPassword) {
+            passwordError.textContent = "Passwords do not match.";
+            passwordError.style.display = 'block';
+            return;
+        }
+
+        try {
+            // Send a POST request to create the wallet
+            const response = await fetch('/walletcreate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wallet_name: walletName,
+                    stronghold_password: strongholdPassword,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Failed to create wallet.");
+            }
+
+            const { wallet_id, mnemonic, vault_download_link } = await response.json();
+
+            const downloadLink = document.getElementById("download-link");
+            downloadLink.href = vault_download_link;  // Set the download URL
+
+            // Show the mnemonic in the modal
+            mnemonicText.textContent = mnemonic;
+            mnemonicModal.show();
+
+            // Show success message
+            successMessage.textContent = `Wallet Created! Wallet ID: ${wallet_id}`;
+            successMessage.style.display = 'block';
+
+        } catch (error) {
+            // Handle errors
+            passwordError.textContent = error.message || "An error occurred. Please try again.";
+            passwordError.style.display = 'block';
+        }
+    }
+
+</script>
+
+{% endblock %}

@@ -6,8 +6,9 @@
 {% block content %}
 <div class="container">
     <div class="register-container mx-auto"> <!-- Change class name here -->
-        <h3 class="text-center mb-4">My Identity</h3>
-        <form action="/wallet" method="POST">
+        <h3 class="text-center mb-4">My Wallets</h3>
+        <!-- <form action="/createnew" method="POST"> -->
+            <form action="/walletcreate" method="GET">
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-100">Create Wallet</button>
             </div>
