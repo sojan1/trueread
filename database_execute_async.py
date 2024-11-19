@@ -17,3 +17,10 @@ async def profile_command(email,phone):
     result = await db.session.execute(stmt)
     await db.session.commit()
     return result
+
+
+# async def wallet_command(email,phone):
+#     stmt = update(User).where(User.email == email).values(phone=phone)
+#     result = await db.session.execute(stmt)
+#     await db.session.commit()
+#     return result

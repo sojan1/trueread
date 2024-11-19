@@ -147,6 +147,21 @@ async def read_wallet(request: Request, access_token: str = Cookie(None)):
         print({address.address})
         #print(os.environ['WALLET_DB_PATH'])
 
+        
+
+        # user_info = decode_jwt_token(access_token)
+        # user_id = user_info["userid"]
+        # user_email = user_info["email"]
+        # print(user_id)
+        # print(user_email)
+
+        #new_user = User(displayname=displayname, password=password, name=name, email=email, phone=phone)
+
+        # if address != "":
+        #      wallet_command(user_id,tblWallet)
+        #      print("You are eligible to vote!")
+        #      user_id
+
 
         return JSONResponse(content={
             "wallet_id": str(address.address),
